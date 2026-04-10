@@ -1,0 +1,5 @@
+{"id":"task-001","task_type":"code_explanation","difficulty":"easy","prompt":"Explique este código JavaScript: function soma(a,b){ return a+b; }","reference":"A função recebe dois parâmetros e retorna a soma."}
+{"id":"task-002","task_type":"code_explanation","difficulty":"medium","prompt":"Explique este código TypeScript: const dobro = (n:number) => n*2;","reference":"Função arrow tipada que recebe número e retorna o dobro."}
+{"id":"task-003","task_type":"bug_detection","difficulty":"medium","prompt":"Encontre o problema: function div(a,b){ return a/b }","reference":"Falta tratamento para divisão por zero e validação de entrada."}
+{"id":"task-004","task_type":"refactoring","difficulty":"medium","prompt":"Sugira refatoração para: function isAdult(age){ if(age>=18){ return true } else { return false } }","reference":"Pode simplificar para return age >= 18 e melhorar legibilidade."}
+{"id":"task-005","task_type":"test_generation","difficulty":"hard","prompt":"Crie casos de teste para: function max(a,b){ return a>b?a:b }","reference":"Deve cobrir maior, menor, iguais, negativos e zero."}
