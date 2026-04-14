@@ -5,4 +5,6 @@ __all__ = [
     "judges",
     "runner",
     "analysis",
+    "human_eval",
+    "agreement",
 ]

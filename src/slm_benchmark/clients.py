@@ -17,6 +17,26 @@ class OllamaClient:
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
 
+    def healthcheck(self) -> tuple[bool, str]:
+        try:
+            resp = requests.get(f"{self.base_url}/api/tags", timeout=self.timeout_seconds)
+            resp.raise_for_status()
+            return True, "ok"
+        except Exception as exc:
+            return False, str(exc)
+
+    def list_models(self) -> list[str]:
+        resp = requests.get(f"{self.base_url}/api/tags", timeout=self.timeout_seconds)
+        resp.raise_for_status()
+        data = resp.json()
+        models = data.get("models", [])
+        names = []
+        for m in models:
+            name = m.get("name")
+            if isinstance(name, str) and name:
+                names.append(name)
+        return names
+
     def generate(
         self,
         model: str,

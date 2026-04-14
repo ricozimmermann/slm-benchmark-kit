@@ -83,6 +83,8 @@ def run_benchmark(cfg: BenchmarkConfig) -> Path:
 
     trials = _make_trials(cfg)
     random.shuffle(trials)
+    if cfg.trial_limit is not None:
+        trials = trials[: cfg.trial_limit]
 
     cfg.output_path.parent.mkdir(parents=True, exist_ok=True)
 

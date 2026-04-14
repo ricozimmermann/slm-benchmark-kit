@@ -21,12 +21,18 @@ class BenchmarkConfig:
     dataset_path: Path
     output_path: Path
     judges: list[dict[str, Any]]
+    trial_limit: int | None
 
 
 def load_config(path: str | Path) -> BenchmarkConfig:
     cfg_path = Path(path)
     with cfg_path.open("r", encoding="utf-8") as f:
         raw = yaml.safe_load(f)
+
+    trial_limit_raw = raw.get("trial_limit")
+    trial_limit = int(trial_limit_raw) if trial_limit_raw is not None else None
+    if trial_limit is not None and trial_limit <= 0:
+        raise ValueError("trial_limit must be > 0 when provided")
 
     return BenchmarkConfig(
         random_seed=int(raw.get("random_seed", 42)),
@@ -41,4 +47,5 @@ def load_config(path: str | Path) -> BenchmarkConfig:
         dataset_path=Path(raw["dataset_path"]),
         output_path=Path(raw["output_path"]),
         judges=list(raw.get("judges", [{"type": "heuristic"}])),
+        trial_limit=trial_limit,
     )

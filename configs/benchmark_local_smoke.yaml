@@ -1,0 +1,20 @@
+random_seed: 42
+base_url: "http://localhost:11434"
+
+models:
+  - "deepseek-coder:1.3b"
+
+temperatures: [0.2]
+top_p: [0.9]
+top_k: [40]
+repetitions: 1
+trial_limit: 12
+
+max_tokens: 180
+timeout_seconds: 120
+
+dataset_path: "datasets/slm_tasks_ptbr.jsonl"
+output_path: "results/raw_benchmark_local_smoke.jsonl"
+
+judges:
+  - type: "heuristic"

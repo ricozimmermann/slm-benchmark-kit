@@ -1,0 +1,151 @@
+Metadata-Version: 2.4
+Name: slm-benchmark-kit
+Version: 0.1.0
+Summary: Reusable benchmark framework for Small Language Models (SLMs)
+Author: Rico Zimmermann
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.32.0
+Requires-Dist: pandas>=2.2.0
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: scipy>=1.12.0
+Requires-Dist: statsmodels>=0.14.0
+Requires-Dist: pyyaml>=6.0.1
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: ruff>=0.6.0; extra == "dev"
+Dynamic: license-file
+
+# slm-benchmark-kit
+
+Framework reutilizavel para benchmark de SLMs (Small Language Models), desacoplado do projeto Sagui.
+
+Objetivo:
+- comparar modelos e parametros com reproducibilidade;
+- suportar multiplos projetos com o mesmo protocolo;
+- produzir analise estatistica real (Welch t-test, OLS, IC bootstrap).
+
+## 1. Estrategia metodologica
+
+Este projeto ja incorpora melhorias essenciais de benchmark:
+- random seed fixa para reproducibilidade;
+- randomizacao da ordem de trials;
+- repeticoes por combinacao de parametros;
+- multi-judge com agregacao por mediana;
+- analise estatistica com scipy/statsmodels (sem p-value heuristico).
+
+## 2. Instalacao
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -e .
+```
+
+## 3. Rodar benchmark
+
+```bash
+python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
+```
+
+Resultado bruto (JSONL):
+- `results/raw_benchmark.jsonl`
+
+## 4. Gerar relatorio
+
+```bash
+python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md
+```
+
+## 5. Estrutura
+
+- `datasets/`: tarefas em JSONL
+- `configs/`: configuracoes de experimento
+- `scripts/`: entrypoints CLI
+- `src/slm_benchmark/runner.py`: execucao e coleta
+- `src/slm_benchmark/analysis.py`: estatistica robusta
+
+## 6. Publicar como repositorio publico
+
+No diretorio do projeto:
+
+```bash
+git init
+git add .
+git commit -m "feat: initial slm benchmark kit"
+```
+
+Se tiver GitHub CLI (`gh`) autenticado:
+
+```bash
+gh repo create slm-benchmark-kit --public --source . --remote origin --push
+```
+
+Se preferir criar manualmente no GitHub:
+1. crie um repositorio publico vazio;
+2. rode:
+
+```bash
+git remote add origin https://github.com/<seu-usuario>/slm-benchmark-kit.git
+git branch -M main
+git push -u origin main
+```
+
+## 7. Dataset estratificado
+
+Este projeto ja inclui um dataset inicial com 40 tarefas estratificadas em 5 familias:
+- code_explanation
+- bug_detection
+- refactoring
+- test_generation
+- security_performance
+
+Arquivo:
+- datasets/slm_tasks_ptbr.jsonl
+
+## 8. Avaliacao humana cega
+
+Gerar pacote de anotacao cega com overlap para medicao de concordancia:
+
+```bash
+python scripts/prepare_human_eval.py \
+	--input results/raw_benchmark.jsonl \
+	--assignment results/human_assignment.csv \
+	--key results/human_key_private.csv \
+	--evaluators eval01 eval02 eval03 \
+	--sample-size 120 \
+	--overlap-rate 0.25
+```
+
+Depois de preencher score_overall e demais campos no CSV de assignment:
+
+```bash
+python scripts/agreement_report.py \
+	--input results/human_assignment_scored.csv \
+	--output results/human_agreement.md
+```
+
+Rubrica:
+- docs/human_eval_rubric.md
+
+## 9. Protocolo de release cientifico
+
+Versionamento e governanca metodologica:
+- VERSION
+- CHANGELOG.md
+- docs/release_protocol.md
+
+Templates para divulgacao:
+- templates/report_template.md
+- templates/paper_outline.md
+
+## 10. Publicacao publica no GitHub
+
+Se ainda nao tiver remoto configurado:
+
+```bash
+git remote add origin https://github.com/<seu-usuario>/slm-benchmark-kit.git
+git branch -M main
+git push -u origin main
+```
