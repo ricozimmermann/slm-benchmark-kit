@@ -55,29 +55,19 @@ python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output r
 4. (Opcional) Prepare avaliacao humana cega:
 
 ```bash
-python scripts/prepare_human_eval.py \
-	--input results/raw_benchmark.jsonl \
-	--assignment results/human_assignment.csv \
-	--key results/human_key_private.csv \
-	--evaluators eval01 eval02 eval03 \
-	--sample-size 120 \
-	--overlap-rate 0.25
+python scripts/prepare_human_eval.py --input results/raw_benchmark.jsonl --assignment results/human_assignment.csv --key results/human_key_private.csv --evaluators eval01 eval02 eval03 --sample-size 120 --overlap-rate 0.25
 ```
 
 5. (Opcional) Gere concordancia entre avaliadores:
 
 ```bash
-python scripts/agreement_report.py \
-	--input results/human_assignment_scored.csv \
-	--key results/human_key_private.csv \
-	--output results/human_agreement.md
+python scripts/agreement_report.py --input results/human_assignment_scored.csv --key results/human_key_private.csv --output results/human_agreement.md
 ```
 
 ## 3. Rodar benchmark
 
-```bash
-python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
-```
+Comando principal (detalhado no onboarding 2.1):
+- `python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml`
 
 ### 3.1 Teste local rapido (SLM em Ollama)
 
@@ -97,9 +87,8 @@ Resultado bruto (JSONL):
 
 ## 4. Gerar relatorio
 
-```bash
-python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md
-```
+Comando principal (detalhado no onboarding 2.1):
+- `python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md`
 
 ## 5. Arquitetura do projeto (didatica)
 
@@ -231,26 +220,7 @@ Arquivo:
 
 ## 8. Avaliacao humana cega
 
-Gerar pacote de anotacao cega com overlap para medicao de concordancia:
-
-```bash
-python scripts/prepare_human_eval.py \
-	--input results/raw_benchmark.jsonl \
-	--assignment results/human_assignment.csv \
-	--key results/human_key_private.csv \
-	--evaluators eval01 eval02 eval03 \
-	--sample-size 120 \
-	--overlap-rate 0.25
-```
-
-Depois de preencher score_overall e demais campos no CSV de assignment:
-
-```bash
-python scripts/agreement_report.py \
-	--input results/human_assignment_scored.csv \
-	--key results/human_key_private.csv \
-	--output results/human_agreement.md
-```
+Os comandos de preparo e concordancia ja estao no onboarding 2.1 (passos 4 e 5).
 
 Rubrica:
 - docs/human_eval_rubric.md
@@ -276,10 +246,4 @@ Templates para divulgacao:
 
 ## 10. Publicacao publica no GitHub
 
-Se ainda nao tiver remoto configurado:
-
-```bash
-git remote add origin https://github.com/<seu-usuario>/slm-benchmark-kit.git
-git branch -M main
-git push -u origin main
-```
+Este passo ja esta coberto na secao 6.

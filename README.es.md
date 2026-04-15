@@ -70,9 +70,8 @@ python scripts/agreement_report.py \
 
 ## 3. Ejecutar benchmark
 
-```bash
-python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
-```
+Comando principal (ya detallado en onboarding 2.1):
+- `python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml`
 
 ### 3.1 Prueba local rapida (SLM en Ollama)
 
@@ -92,9 +91,8 @@ Salida cruda (JSONL):
 
 ## 4. Generar reporte
 
-```bash
-python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md
-```
+Comando principal (ya detallado en onboarding 2.1):
+- `python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md`
 
 ## 5. Arquitectura del proyecto (didactica)
 
@@ -226,26 +224,7 @@ Archivo:
 
 ## 8. Evaluacion humana ciega
 
-Genera paquete de anotacion ciega con overlap para medir concordancia:
-
-```bash
-python scripts/prepare_human_eval.py \
-	--input results/raw_benchmark.jsonl \
-	--assignment results/human_assignment.csv \
-	--key results/human_key_private.csv \
-	--evaluators eval01 eval02 eval03 \
-	--sample-size 120 \
-	--overlap-rate 0.25
-```
-
-Despues de completar score_overall y otros campos en el CSV de assignment:
-
-```bash
-python scripts/agreement_report.py \
-	--input results/human_assignment_scored.csv \
-	--key results/human_key_private.csv \
-	--output results/human_agreement.md
-```
+Los comandos de preparacion y concordancia ya aparecen en onboarding 2.1 (pasos 4 y 5).
 
 Rubrica:
 - docs/human_eval_rubric.md
@@ -271,10 +250,4 @@ Templates para difusion:
 
 ## 10. Publicacion publica en GitHub
 
-Si aun no tienes remoto configurado:
-
-```bash
-git remote add origin https://github.com/<tu-usuario>/slm-benchmark-kit.git
-git branch -M main
-git push -u origin main
-```
+Este paso ya esta cubierto en la seccion 6.
