@@ -1,11 +1,16 @@
 # slm-benchmark-kit
 
+Idiomas / Languages:
+- Portugues (este arquivo): `README.md`
+- English: `README.en.md`
+- Espanol: `README.es.md`
+
 Framework reutilizavel para benchmark de SLMs (Small Language Models).
 
 Objetivo:
 - comparar modelos e parametros com reproducibilidade;
 - suportar multiplos projetos com o mesmo protocolo;
-- produzir analise estatistica real (Welch t-test, OLS, IC bootstrap).
+- produzir analise estatistica real (Welch t-test com tamanho de efeito, OLS robusto por item, IC bootstrap).
 
 ## 1. Estrategia metodologica
 
@@ -13,7 +18,8 @@ Este projeto ja incorpora melhorias essenciais de benchmark:
 - random seed fixa para reproducibilidade;
 - randomizacao da ordem de trials;
 - repeticoes por combinacao de parametros;
-- multi-judge com agregacao por mediana;
+- split de avaliacao explicito (`eval_split`) para separar tuning e teste;
+- multi-judge com agregacao por mediana, usando dois juizes LLM nomeados no benchmark principal;
 - analise estatistica com scipy/statsmodels (sem p-value heuristico).
 
 ## 2. Instalacao
@@ -63,6 +69,7 @@ python scripts/prepare_human_eval.py \
 ```bash
 python scripts/agreement_report.py \
 	--input results/human_assignment_scored.csv \
+	--key results/human_key_private.csv \
 	--output results/human_agreement.md
 ```
 
@@ -74,7 +81,7 @@ python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
 
 ### 3.1 Teste local rapido (SLM em Ollama)
 
-Use a configuracao smoke para validar pipeline localmente com poucas amostras:
+Use a configuracao smoke para validar pipeline localmente com poucas amostras e comparar dois modelos em escala reduzida:
 
 ```bash
 python scripts/run_benchmark.py --config configs/benchmark_local_smoke.yaml --check-local
@@ -86,7 +93,7 @@ Isso faz:
 - execucao com `trial_limit` pequeno para teste rapido.
 
 Resultado bruto (JSONL):
-- `results/raw_benchmark.jsonl`
+- `results/raw_benchmark_local_smoke.jsonl`
 
 ## 4. Gerar relatorio
 
@@ -123,12 +130,12 @@ results/raw_benchmark*.jsonl
 	- Papel: definir o experimento sem alterar codigo.
 	- `benchmark_local_smoke.yaml`: validacao rapida (poucas combinacoes, `trial_limit` baixo).
 	- `benchmark_ollama.yaml`: benchmark principal (mais modelos/parametros e multi-judge).
-	- Campos principais: `models`, `temperatures`, `top_p`, `top_k`, `repetitions`, `dataset_path`, `output_path`, `judges`.
+	- Campos principais: `models`, `temperatures`, `top_p`, `top_k`, `repetitions`, `dataset_path`, `eval_split`, `output_path`, `judges`.
 
 - `datasets/`
 	- Papel: fonte de tarefas em JSONL (uma tarefa por linha).
 	- `slm_tasks_ptbr.jsonl`: dataset inicial estratificado em 5 familias.
-	- Schema pratico por item: `id`, `task_type`, `difficulty`, `prompt`, `reference`.
+	- Schema pratico por item: `id`, `split`, `task_type`, `difficulty`, `prompt`, `reference`.
 
 - `scripts/`
 	- Papel: interface CLI para operar o pipeline ponta a ponta.
@@ -144,7 +151,7 @@ results/raw_benchmark*.jsonl
 	- `clients.py`: cliente Ollama (healthcheck, listagem de modelos, geracao de resposta).
 	- `judges.py`: avaliadores automaticos (heuristico e judge por LLM via Ollama).
 	- `runner.py`: gera combinacoes de trial, randomiza ordem, executa, agrega score por mediana, persiste resultados.
-	- `analysis.py`: resumo por modelo, IC bootstrap, Welch t-test e regressao OLS.
+	- `analysis.py`: resumo por modelo com metricas operacionais, IC bootstrap, Welch t-test com Cohen's d e regressao OLS robusta por item.
 	- `human_eval.py`: amostragem estratificada e distribuicao de tarefas cegas para humanos.
 	- `agreement.py`: relatorio de concordancia interavaliador.
 
@@ -214,6 +221,11 @@ Este projeto ja inclui um dataset inicial com 40 tarefas estratificadas em 5 fam
 - test_generation
 - security_performance
 
+Para protocolo academico 0.2.0, o dataset possui split materializado em cada item:
+- `train`: 24 tarefas
+- `dev`: 8 tarefas
+- `test`: 8 tarefas
+
 Arquivo:
 - datasets/slm_tasks_ptbr.jsonl
 
@@ -236,11 +248,20 @@ Depois de preencher score_overall e demais campos no CSV de assignment:
 ```bash
 python scripts/agreement_report.py \
 	--input results/human_assignment_scored.csv \
+	--key results/human_key_private.csv \
 	--output results/human_agreement.md
 ```
 
 Rubrica:
 - docs/human_eval_rubric.md
+
+### 8.1 Validacoes de entrada (atual)
+
+O fluxo de avaliacao humana agora falha cedo com mensagem clara quando:
+- `--evaluators` esta vazio;
+- `--sample-size` e menor ou igual a zero;
+- `--overlap-rate` esta fora do intervalo `[0, 1]`;
+- o JSONL de entrada nao possui linhas com `valid_response = true`.
 
 ## 9. Protocolo de release cientifico
 

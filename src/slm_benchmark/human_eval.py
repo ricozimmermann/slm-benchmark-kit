@@ -16,6 +16,9 @@ class SamplingPlan:
 
 
 def _stratified_sample(df: pd.DataFrame, sample_size: int, seed: int) -> pd.DataFrame:
+    if sample_size <= 0 or df.empty:
+        return df.head(0).copy()
+
     rng = np.random.default_rng(seed)
     d = df.copy().reset_index(names="_orig_idx")
     group_cols = ["model", "task_type", "difficulty"]
@@ -39,6 +42,9 @@ def _stratified_sample(df: pd.DataFrame, sample_size: int, seed: int) -> pd.Data
         if n > 0:
             take = g.sample(n=n, random_state=int(rng.integers(0, 10_000_000)))
             parts.append(take)
+
+    if not parts:
+        return d.head(0).drop(columns=["_orig_idx"], errors="ignore").reset_index(drop=True)
 
     sampled = pd.concat(parts, ignore_index=True)
 
@@ -65,8 +71,18 @@ def prepare_blind_human_eval(
     evaluators: Sequence[str],
     plan: SamplingPlan = SamplingPlan(),
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if not evaluators:
+        raise ValueError("At least one evaluator must be provided")
+    if plan.sample_size <= 0:
+        raise ValueError("sample_size must be > 0")
+    if not 0.0 <= plan.overlap_rate <= 1.0:
+        raise ValueError("overlap_rate must be between 0 and 1")
+
     df = pd.read_json(raw_results_path, lines=True)
     df = df[df["valid_response"] == True].copy()  # noqa: E712
+
+    if df.empty:
+        raise ValueError("No valid_response rows found in raw benchmark file")
 
     sampled = _stratified_sample(df, sample_size=plan.sample_size, seed=plan.seed)
     sampled = sampled.reset_index(drop=True)
@@ -93,7 +109,7 @@ def prepare_blind_human_eval(
     base_assign = rng.choice(evaluator_list, size=len(sampled), replace=True)
     sampled["primary_evaluator"] = base_assign
 
-    overlap_n = int(round(len(sampled) * plan.overlap_rate))
+    overlap_n = min(len(sampled), int(round(len(sampled) * plan.overlap_rate)))
     overlap_ids = set(rng.choice(sampled["blind_id"], size=overlap_n, replace=False).tolist())
 
     rows = []

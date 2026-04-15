@@ -8,6 +8,7 @@ from pathlib import Path
 @dataclass
 class DatasetItem:
     id: str
+    split: str
     task_type: str
     difficulty: str
     prompt: str
@@ -24,6 +25,7 @@ def load_jsonl_dataset(path: str | Path) -> list[DatasetItem]:
             items.append(
                 DatasetItem(
                     id=str(raw["id"]),
+                    split=str(raw.get("split", "test")).strip().lower(),
                     task_type=str(raw["task_type"]),
                     difficulty=str(raw.get("difficulty", "unknown")),
                     prompt=str(raw["prompt"]),

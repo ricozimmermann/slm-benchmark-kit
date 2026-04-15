@@ -14,6 +14,7 @@ Files to update every release:
 - CHANGELOG.md
 - configs/benchmark_ollama.yaml (if config changed)
 - datasets/slm_tasks_ptbr.jsonl (if dataset changed)
+- dataset checksum (SHA256) in metadata.json
 
 ## 2) Required release artifacts
 
@@ -23,11 +24,13 @@ For each release tag, publish:
 - Human eval assignment template used.
 - Human agreement report.
 - Exact runtime config YAML.
+- Dataset SHA256 and split policy used in evaluation.
 - Git commit hash and platform metadata.
 
 ## 3) Methodology guardrails
 
 - Keep holdout evaluation split untouched during tuning.
+- Set `eval_split: test` for scientific reporting.
 - Use fixed seed for each release.
 - Record model IDs exactly as run in Ollama.
 - Keep blind mapping file private during human scoring.
@@ -39,6 +42,7 @@ For each release tag, publish:
 - [ ] Append CHANGELOG with method/data changes.
 - [ ] Run benchmark with release config.
 - [ ] Generate statistical report.
+- [ ] Confirm robust inference (cluster by item when available).
 - [ ] Prepare blind human evaluation sample.
 - [ ] Collect human scores and run agreement report.
 - [ ] Archive artifacts in results/release-vX.Y.Z/.

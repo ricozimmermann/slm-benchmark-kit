@@ -3,18 +3,26 @@ base_url: "http://localhost:11434"
 
 models:
   - "deepseek-coder:1.3b"
+  - "qwen2.5-coder:1.5b"
 
 temperatures: [0.2]
 top_p: [0.9]
 top_k: [40]
-repetitions: 1
-trial_limit: 12
+repetitions: 2
+trial_limit: 24
 
 max_tokens: 180
 timeout_seconds: 120
 
 dataset_path: "datasets/slm_tasks_ptbr.jsonl"
+eval_split: "test"
 output_path: "results/raw_benchmark_local_smoke.jsonl"
 
 judges:
   - type: "heuristic"
+  - type: "ollama_judge"
+    model: "gemma2:2b"
+    name: "gemma2_judge"
+  - type: "ollama_judge"
+    model: "codellama:7b"
+    name: "codellama_judge"
