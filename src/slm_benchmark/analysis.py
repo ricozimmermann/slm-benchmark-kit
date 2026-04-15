@@ -47,7 +47,10 @@ def summarize_by_model(df: pd.DataFrame) -> pd.DataFrame:
         errors = g["error"].fillna("").astype(str) if "error" in g.columns else pd.Series([""] * len(g))
         error_rate = float((errors != "").mean())
         timeout_rate = float(errors.str.contains("timeout", case=False, regex=False).mean())
-        judge_valid = pd.to_numeric(g.get("judge_valid_count", 0), errors="coerce")
+        if "judge_valid_count" in g.columns:
+            judge_valid = pd.to_numeric(g["judge_valid_count"], errors="coerce")
+        else:
+            judge_valid = pd.Series(np.zeros(len(g), dtype=float), index=g.index)
         judge_all_failed_rate = float((judge_valid <= 0).mean())
 
         latency_p50 = float("nan")

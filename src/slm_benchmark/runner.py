@@ -125,7 +125,7 @@ def run_benchmark(cfg: BenchmarkConfig) -> Path:
                     judge_valid_count += 1
 
                 agg = float(median(judge_scores.values())) if judge_scores else None
-                valid_response = True
+                valid_response = judge_valid_count > 0
             else:
                 agg = None
                 valid_response = False

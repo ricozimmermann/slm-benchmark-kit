@@ -32,20 +32,28 @@ def pairwise_agreement(df_scored: pd.DataFrame, score_col: str = "score_overall"
             rows.append({"eval_a": a, "eval_b": b, "n_overlap": n, "spearman": np.nan, "kendall": np.nan, "weighted_kappa": np.nan})
             continue
 
-        spearman = stats.spearmanr(m["score_a"], m["score_b"]).statistic
-        kendall = stats.kendalltau(m["score_a"], m["score_b"]).statistic
+        a_constant = m["score_a"].nunique(dropna=True) <= 1
+        b_constant = m["score_b"].nunique(dropna=True) <= 1
 
-        # Weighted kappa on integer bins 0..10.
-        xa = np.rint(m["score_a"].to_numpy()).astype(int)
-        xb = np.rint(m["score_b"].to_numpy()).astype(int)
-        xa = np.clip(xa, 0, 10)
-        xb = np.clip(xb, 0, 10)
+        if a_constant or b_constant:
+            spearman = np.nan
+            kendall = np.nan
+            kappa = np.nan
+        else:
+            spearman = stats.spearmanr(m["score_a"], m["score_b"]).statistic
+            kendall = stats.kendalltau(m["score_a"], m["score_b"]).statistic
 
-        table = pd.crosstab(xa, xb)
-        # Ensure full 0..10 table.
-        idx = list(range(11))
-        table = table.reindex(index=idx, columns=idx, fill_value=0)
-        kappa = cohens_kappa(table.to_numpy(), wt="quadratic").kappa
+            # Weighted kappa on integer bins 0..10.
+            xa = np.rint(m["score_a"].to_numpy()).astype(int)
+            xb = np.rint(m["score_b"].to_numpy()).astype(int)
+            xa = np.clip(xa, 0, 10)
+            xb = np.clip(xb, 0, 10)
+
+            table = pd.crosstab(xa, xb)
+            # Ensure full 0..10 table.
+            idx = list(range(11))
+            table = table.reindex(index=idx, columns=idx, fill_value=0)
+            kappa = cohens_kappa(table.to_numpy(), wt="quadratic").kappa
 
         rows.append(
             {
@@ -87,9 +95,16 @@ def auto_human_calibration(
     if n < 3:
         return {"warning": f"insufficient overlap for auto_vs_human correlation (n={n})"}
 
-    spearman = stats.spearmanr(merged["human_score"], merged["auto_score"]).statistic
-    kendall = stats.kendalltau(merged["human_score"], merged["auto_score"]).statistic
-    pearson = stats.pearsonr(merged["human_score"], merged["auto_score"]).statistic
+    human_constant = merged["human_score"].nunique(dropna=True) <= 1
+    auto_constant = merged["auto_score"].nunique(dropna=True) <= 1
+    if human_constant or auto_constant:
+        spearman = np.nan
+        kendall = np.nan
+        pearson = np.nan
+    else:
+        spearman = stats.spearmanr(merged["human_score"], merged["auto_score"]).statistic
+        kendall = stats.kendalltau(merged["human_score"], merged["auto_score"]).statistic
+        pearson = stats.pearsonr(merged["human_score"], merged["auto_score"]).statistic
     mae = float(np.mean(np.abs(merged["human_score"] - merged["auto_score"])))
 
     return {

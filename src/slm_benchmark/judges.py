@@ -90,6 +90,39 @@ class OllamaJudge:
 
         import json
 
+        def _parse_json_payload(text: str) -> dict:
+            blob = text.strip().replace("```json", "").replace("```", "").strip()
+            if not blob:
+                raise ValueError("empty judge output")
+
+            # Fast path when output is already a JSON object.
+            try:
+                obj = json.loads(blob)
+                if isinstance(obj, dict):
+                    return obj
+            except Exception:
+                pass
+
+            # Fallback: scan balanced brace blocks and parse the first valid JSON object.
+            starts = [i for i, ch in enumerate(blob) if ch == "{"]
+            for start in starts:
+                depth = 0
+                for end in range(start, len(blob)):
+                    ch = blob[end]
+                    if ch == "{":
+                        depth += 1
+                    elif ch == "}":
+                        depth -= 1
+                        if depth == 0:
+                            candidate = blob[start : end + 1]
+                            try:
+                                obj = json.loads(candidate)
+                                if isinstance(obj, dict):
+                                    return obj
+                            except Exception:
+                                break
+            raise ValueError("no valid JSON object found in judge output")
+
         def _extract_score_fallback(text: str) -> float | None:
             # Common patterns when the model refuses strict JSON but still emits a numeric score.
             patterns = [
@@ -107,8 +140,7 @@ class OllamaJudge:
             return None
 
         try:
-            blob = out.text.strip().replace("```json", "").replace("```", "")
-            obj = json.loads(blob[blob.find("{") : blob.rfind("}") + 1])
+            obj = _parse_json_payload(out.text)
             score = float(obj.get("score", 0.0))
             rationale = str(obj.get("rationale", ""))
             return JudgeScore(name=self.name, score=max(0.0, min(10.0, score)), rationale=rationale)

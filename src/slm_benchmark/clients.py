@@ -68,7 +68,13 @@ class OllamaClient:
             latency_ms = int((time.perf_counter() - start) * 1000)
             resp.raise_for_status()
             data = resp.json()
-            return GenerationOutput(text=data.get("message", {}).get("content", ""), latency_ms=latency_ms)
+            message = data.get("message")
+            if not isinstance(message, dict):
+                raise ValueError("Unexpected Ollama response: missing 'message' object")
+            content = message.get("content")
+            if not isinstance(content, str):
+                raise ValueError("Unexpected Ollama response: 'message.content' must be a string")
+            return GenerationOutput(text=content, latency_ms=latency_ms)
         except Exception as exc:
             latency_ms = int((time.perf_counter() - start) * 1000)
             return GenerationOutput(text="", latency_ms=latency_ms, error=str(exc))
