@@ -152,6 +152,7 @@ results/raw_benchmark*.jsonl
 - `docs/`
 	- Papel: governanca metodologica.
 	- `human_eval_rubric.md`: criterios de scoring humano (0 a 10 por dimensao).
+	- `metodologia_estatistica.md`: definicao formal da metodologia estatistica (IC bootstrap, Welch, Cohen's d, OLS robusto e metricas de confiabilidade).
 	- `release_protocol.md`: checklist cientifico para releases reproduziveis.
 
 - `templates/`
@@ -175,31 +176,24 @@ results/raw_benchmark*.jsonl
 6. `scripts/analyze_results.py` chama `analysis.py` para estatistica e gera markdown.
 7. Se houver avaliacao humana, `human_eval.py` e `agreement.py` fecham o ciclo.
 
-## 6. Publicar como repositorio publico
+## 6. Fluxo de contribuicao e novas funcionalidades
 
-No diretorio do projeto:
+Para evoluir um repositorio que ja existe, use o fluxo de branch de funcionalidade + Pull Request:
 
 ```bash
-git init
+git checkout -b feat/nome-da-funcionalidade
+# implemente a mudanca e rode os testes necessarios
 git add .
-git commit -m "feat: initial slm benchmark kit"
+git commit -m "feat: descricao curta da funcionalidade"
+git push -u origin feat/nome-da-funcionalidade
 ```
 
-Se tiver GitHub CLI (`gh`) autenticado:
+Depois, abra um Pull Request no GitHub para revisar e integrar na `main`.
 
-```bash
-gh repo create slm-benchmark-kit --public --source . --remote origin --push
-```
-
-Se preferir criar manualmente no GitHub:
-1. crie um repositorio publico vazio;
-2. rode:
-
-```bash
-git remote add origin https://github.com/<seu-usuario>/slm-benchmark-kit.git
-git branch -M main
-git push -u origin main
-```
+Checklist recomendado antes do PR:
+1. rodar smoke test local (`configs/benchmark_local_smoke.yaml`);
+2. atualizar `CHANGELOG.md` quando houver mudanca relevante;
+3. validar se `VERSION` precisa ser incrementada para release.
 
 ## 7. Dataset estratificado
 
@@ -244,6 +238,3 @@ Templates para divulgacao:
 - templates/report_template.md
 - templates/paper_outline.md
 
-## 10. Publicacao publica no GitHub
-
-Este passo ja esta coberto na secao 6.

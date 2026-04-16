@@ -179,31 +179,24 @@ results/raw_benchmark*.jsonl
 6. `scripts/analyze_results.py` llama `analysis.py` y genera estadisticas en markdown.
 7. Si hay evaluacion humana, `human_eval.py` y `agreement.py` cierran el ciclo.
 
-## 6. Publicar como repositorio publico
+## 6. Flujo de contribucion y nuevas funcionalidades
 
-En el directorio del proyecto:
+Para evolucionar un repositorio que ya existe, usa un flujo de rama de funcionalidad + Pull Request:
 
 ```bash
-git init
+git checkout -b feat/nombre-de-funcionalidad
+# implementa tus cambios y ejecuta las pruebas necesarias
 git add .
-git commit -m "feat: initial slm benchmark kit"
+git commit -m "feat: descripcion corta de la funcionalidad"
+git push -u origin feat/nombre-de-funcionalidad
 ```
 
-Si tienes GitHub CLI (`gh`) autenticado:
+Despues, abre un Pull Request en GitHub para revisar e integrar en `main`.
 
-```bash
-gh repo create slm-benchmark-kit --public --source . --remote origin --push
-```
-
-Si prefieres crearlo manualmente en GitHub:
-1. crea un repositorio publico vacio;
-2. ejecuta:
-
-```bash
-git remote add origin https://github.com/<tu-usuario>/slm-benchmark-kit.git
-git branch -M main
-git push -u origin main
-```
+Checklist recomendado antes del PR:
+1. ejecutar el smoke test local (`configs/benchmark_local_smoke.yaml`);
+2. actualizar `CHANGELOG.md` cuando el cambio sea relevante;
+3. validar si `VERSION` debe incrementarse para release.
 
 ## 7. Dataset estratificado
 
@@ -248,6 +241,3 @@ Templates para difusion:
 - templates/report_template.md
 - templates/paper_outline.md
 
-## 10. Publicacion publica en GitHub
-
-Este paso ya esta cubierto en la seccion 6.

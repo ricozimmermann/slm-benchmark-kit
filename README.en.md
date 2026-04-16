@@ -179,31 +179,24 @@ results/raw_benchmark*.jsonl
 6. `scripts/analyze_results.py` calls `analysis.py` and generates markdown statistics.
 7. If human evaluation is used, `human_eval.py` and `agreement.py` close the loop.
 
-## 6. Publish as public repository
+## 6. Contribution and new features workflow
 
-In the project directory:
+To evolve a repository that already exists, use a feature branch + Pull Request workflow:
 
 ```bash
-git init
+git checkout -b feat/feature-name
+# implement your changes and run the required tests
 git add .
-git commit -m "feat: initial slm benchmark kit"
+git commit -m "feat: short feature description"
+git push -u origin feat/feature-name
 ```
 
-If GitHub CLI (`gh`) is authenticated:
+Then open a Pull Request on GitHub to review and merge into `main`.
 
-```bash
-gh repo create slm-benchmark-kit --public --source . --remote origin --push
-```
-
-If you prefer creating manually on GitHub:
-1. create an empty public repository;
-2. run:
-
-```bash
-git remote add origin https://github.com/<your-user>/slm-benchmark-kit.git
-git branch -M main
-git push -u origin main
-```
+Recommended checklist before opening the PR:
+1. run the local smoke test (`configs/benchmark_local_smoke.yaml`);
+2. update `CHANGELOG.md` when the change is relevant;
+3. validate whether `VERSION` should be bumped for release.
 
 ## 7. Stratified dataset
 
@@ -248,6 +241,3 @@ Templates for dissemination:
 - templates/report_template.md
 - templates/paper_outline.md
 
-## 10. Public release on GitHub
-
-This is already covered in section 6.
