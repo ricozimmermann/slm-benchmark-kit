@@ -127,14 +127,14 @@ python scripts/agreement_report.py \
 ```
 
 Rubrica:
-- docs/human_eval_rubric.md
+- docs/human_eval_rubric.pt-br.md
 
 ## 9. Protocolo de release cientifico
 
 Versionamento e governanca metodologica:
 - VERSION
 - CHANGELOG.md
-- docs/release_protocol.md
+- docs/release_protocol.pt-br.md
 
 Templates para divulgacao:
 - templates/report_template.md

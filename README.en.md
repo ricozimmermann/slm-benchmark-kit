@@ -155,8 +155,8 @@ results/raw_benchmark*.jsonl
 
 - `docs/`
 	- Role: methodological governance.
-	- `human_eval_rubric.md`: human scoring criteria (0 to 10 by dimension).
-	- `release_protocol.md`: scientific checklist for reproducible releases.
+	- `human_eval_rubric.en.md`: human scoring criteria (0 to 10 by dimension).
+	- `release_protocol.en.md`: scientific checklist for reproducible releases.
 
 - `templates/`
 	- Role: communication/scientific writing standards.
@@ -220,7 +220,7 @@ File:
 Preparation and agreement commands are already listed in onboarding 2.1 (steps 4 and 5).
 
 Rubric:
-- docs/human_eval_rubric.md
+- docs/human_eval_rubric.en.md
 
 ### 8.1 Input validations (current)
 
@@ -235,7 +235,7 @@ The human evaluation flow now fails early with a clear message when:
 Versioning and methodological governance:
 - VERSION
 - CHANGELOG.md
-- docs/release_protocol.md
+- docs/release_protocol.en.md
 
 Templates for dissemination:
 - templates/report_template.md

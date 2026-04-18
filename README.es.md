@@ -155,8 +155,8 @@ results/raw_benchmark*.jsonl
 
 - `docs/`
 	- Rol: gobernanza metodologica.
-	- `human_eval_rubric.md`: criterios de scoring humano (0 a 10 por dimension).
-	- `release_protocol.md`: checklist cientifico para releases reproducibles.
+	- `human_eval_rubric.es.md`: criterios de scoring humano (0 a 10 por dimension).
+	- `release_protocol.es.md`: checklist cientifico para releases reproducibles.
 
 - `templates/`
 	- Rol: estandar de comunicacion tecnica/cientifica.
@@ -220,7 +220,7 @@ Archivo:
 Los comandos de preparacion y concordancia ya aparecen en onboarding 2.1 (pasos 4 y 5).
 
 Rubrica:
-- docs/human_eval_rubric.md
+- docs/human_eval_rubric.es.md
 
 ### 8.1 Validaciones de entrada (actual)
 
@@ -235,7 +235,7 @@ El flujo de evaluacion humana ahora falla temprano con mensaje claro cuando:
 Versionado y gobernanza metodologica:
 - VERSION
 - CHANGELOG.md
-- docs/release_protocol.md
+- docs/release_protocol.es.md
 
 Templates para difusion:
 - templates/report_template.md

@@ -229,7 +229,7 @@ Data da verificacao: 2026-04-15.
 
 ### 9.2 Evidencia de uso em repositorios brasileiros
 
-Para responder a possivel duvida sobre "atualidade" dos metodos, foi realizada consulta adicional em repositorios institucionais brasileiros. O objetivo nao foi substituir as referencias fundacionais, mas verificar uso recente em teses/dissertacoes.
+Para responder a possivel duvida sobre "atualidade" dos metodos, foi realizada consulta adicional automatizada em repositorios institucionais brasileiros. O objetivo nao foi substituir as referencias fundacionais, mas verificar uso recente em teses/dissertacoes.
 
 Resumo dos retornos observados:
 - UFMG ([repositorio.ufmg.br](https://repositorio.ufmg.br/)): busca por bootstrap com 580 resultados; busca por welch com 394 resultados.
