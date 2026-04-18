@@ -151,9 +151,9 @@ results/raw_benchmark*.jsonl
 
 - `docs/`
 	- Papel: governanca metodologica.
-	- `human_eval_rubric.md`: criterios de scoring humano (0 a 10 por dimensao).
-	- `metodologia_estatistica.md`: definicao formal da metodologia estatistica (IC bootstrap, Welch, Cohen's d, OLS robusto e metricas de confiabilidade).
-	- `release_protocol.md`: checklist cientifico para releases reproduziveis.
+	- `human_eval_rubric.pt-br.md`: criterios de scoring humano (0 a 10 por dimensao).
+	- `metodologia_estatistica.pt-br.md`: definicao formal da metodologia estatistica (IC bootstrap, Welch, Cohen's d, OLS robusto e metricas de confiabilidade).
+	- `release_protocol.pt-br.md`: checklist cientifico para releases reproduziveis.
 
 - `templates/`
 	- Papel: padrao de comunicacao tecnica/cientifica.
@@ -217,7 +217,7 @@ Arquivo:
 Os comandos de preparo e concordancia ja estao no onboarding 2.1 (passos 4 e 5).
 
 Rubrica:
-- docs/human_eval_rubric.md
+- docs/human_eval_rubric.pt-br.md
 
 ### 8.1 Validacoes de entrada (atual)
 
@@ -232,7 +232,7 @@ O fluxo de avaliacao humana agora falha cedo com mensagem clara quando:
 Versionamento e governanca metodologica:
 - VERSION
 - CHANGELOG.md
-- docs/release_protocol.md
+- docs/release_protocol.pt-br.md
 
 Templates para divulgacao:
 - templates/report_template.md
