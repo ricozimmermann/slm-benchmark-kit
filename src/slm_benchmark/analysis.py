@@ -150,6 +150,10 @@ def fit_ols(df: pd.DataFrame):
         data=d,
     )
     if "item_id" in d.columns and d["item_id"].nunique() > 1:
+        n_clusters = int(d["item_id"].nunique())
+        n_constraints = len(model.exog_names) - 1
+        if n_clusters <= n_constraints:
+            return model.fit(cov_type="HC3")
         try:
             return model.fit(cov_type="cluster", cov_kwds={"groups": d["item_id"]})
         except Exception:

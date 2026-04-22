@@ -1,0 +1,51 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: slm-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  ollama-pull:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODELS: deepseek-coder:1.3b,qwen2.5-coder:1.5b,gemma2:2b,codellama:7b
+    command: ["python", "scripts/docker_pull_models.py"]
+    restart: "no"
+
+  benchmark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+    volumes:
+      - ./results:/app/results
+    command: ["python", "scripts/run_benchmark.py", "--config", "configs/benchmark_ollama_docker.yaml", "--check-local"]
+
+  analysis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./results:/app/results
+    command: ["python", "scripts/analyze_results.py", "--input", "results/raw_benchmark_docker.jsonl", "--output", "results/report_docker.md"]
+
+volumes:
+  ollama_data:

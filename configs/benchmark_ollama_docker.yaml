@@ -1,0 +1,27 @@
+random_seed: 42
+base_url: "http://ollama:11434"
+
+models:
+  - "deepseek-coder:1.3b"
+  - "qwen2.5-coder:1.5b"
+
+temperatures: [0.0, 0.3, 0.7]
+top_p: [0.5, 0.7, 0.9]
+top_k: [10, 40, 100]
+repetitions: 3
+
+max_tokens: 220
+timeout_seconds: 120
+
+dataset_path: "datasets/slm_tasks_ptbr.jsonl"
+eval_split: "test"
+output_path: "results/raw_benchmark_docker.jsonl"
+
+judges:
+  - type: "heuristic"
+  - type: "ollama_judge"
+    model: "gemma2:2b"
+    name: "gemma2_judge"
+  - type: "ollama_judge"
+    model: "codellama:7b"
+    name: "codellama_judge"

@@ -30,6 +30,72 @@ python -m venv .venv
 pip install -e .
 ```
 
+## 2.2 Execucao com Docker (Ollama + benchmark)
+
+Pre-requisitos:
+- Docker Desktop instalado e ativo.
+
+Arquivos adicionados para este fluxo:
+- `Dockerfile`
+- `docker-compose.yml`
+- `configs/benchmark_ollama_docker.yaml`
+- `scripts/docker_pull_models.py`
+
+Passo a passo:
+
+1. Suba o servidor Ollama em container:
+
+```bash
+docker compose up -d ollama
+```
+
+2. Baixe os modelos necessarios (benchmark + juizes):
+
+```bash
+docker compose run --rm ollama-pull
+```
+
+Modelos padrao puxados:
+- deepseek-coder:1.3b
+- qwen2.5-coder:1.5b
+- gemma2:2b
+- codellama:7b
+
+Para customizar modelos sem editar arquivo:
+
+```bash
+OLLAMA_MODELS="qwen2.5-coder:1.5b,gemma2:2b" docker compose run --rm ollama-pull
+```
+
+3. Execute o benchmark no container da aplicacao:
+
+```bash
+docker compose run --rm benchmark
+```
+
+Resultado bruto esperado:
+- `results/raw_benchmark_docker.jsonl`
+
+4. Gere o relatorio estatistico em container:
+
+```bash
+docker compose run --rm analysis
+```
+
+Saida esperada:
+- `results/report_docker.md`
+
+5. Encerrar ambiente quando terminar:
+
+```bash
+docker compose down
+```
+
+Observacoes:
+- O volume `ollama_data` preserva os modelos entre execucoes.
+- O servico `benchmark` usa `configs/benchmark_ollama_docker.yaml`, com `base_url` apontando para `http://ollama:11434`.
+- A pasta local `results/` e montada no container para manter os artefatos no host.
+
 ## 2.1 Onboarding rapido (ordem recomendada)
 
 Se for sua primeira vez no projeto, siga esta ordem:
@@ -237,4 +303,3 @@ Versionamento e governanca metodologica:
 Templates para divulgacao:
 - templates/report_template.md
 - templates/paper_outline.md
-
