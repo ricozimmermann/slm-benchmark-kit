@@ -161,6 +161,71 @@ def fit_ols(df: pd.DataFrame):
     return model.fit(cov_type="HC3")
 
 
+def ols_diagnostics(df: pd.DataFrame) -> dict:
+    """Run Shapiro-Wilk, Breusch-Pagan and interaction OLS on existing data."""
+    from statsmodels.stats.diagnostic import het_breuschpagan
+
+    d = df.copy()
+    required_columns = {"score_aggregated", "model", "task_type", "temperature", "top_p", "top_k"}
+    if d.empty or not required_columns.issubset(d.columns):
+        return {"warning": "Diagnostics skipped: missing required columns."}
+
+    d["score_aggregated"] = pd.to_numeric(d["score_aggregated"], errors="coerce")
+    d = d.dropna(subset=["score_aggregated"])
+    if len(d) < 8:
+        return {"warning": "Diagnostics skipped: insufficient data."}
+
+    d["model"] = d["model"].astype("category")
+    d["task_type"] = d["task_type"].astype("category")
+
+    # --- base model (same as fit_ols) for residuals ---
+    base_formula = "score_aggregated ~ C(model) + temperature + top_p + top_k + C(task_type)"
+    base_fit = smf.ols(base_formula, data=d).fit()
+    residuals = base_fit.resid.to_numpy()
+    exog = base_fit.model.exog
+
+    # Shapiro-Wilk (subsample to 5000 if needed; SW requires n <= 5000)
+    sw_sample = residuals if len(residuals) <= 5000 else residuals[:5000]
+    sw_stat, sw_p = stats.shapiro(sw_sample)
+
+    # Breusch-Pagan
+    bp_lm, bp_lm_p, bp_f, bp_f_p = het_breuschpagan(residuals, exog)
+
+    # --- interaction model: task_type * temperature ---
+    interaction_formula = (
+        "score_aggregated ~ C(model) + C(task_type) * temperature + top_p + top_k"
+    )
+    interaction_fit = smf.ols(interaction_formula, data=d).fit(cov_type="HC3")
+
+    return {
+        "n_obs": int(len(d)),
+        # Shapiro-Wilk
+        "shapiro_wilk_stat": float(sw_stat),
+        "shapiro_wilk_p": float(sw_p),
+        "shapiro_wilk_note": (
+            "Resíduos aproximadamente normais (p >= 0.05)"
+            if sw_p >= 0.05
+            else "Desvio de normalidade detectado (p < 0.05)"
+        ),
+        # Breusch-Pagan
+        "breusch_pagan_lm": float(bp_lm),
+        "breusch_pagan_lm_p": float(bp_lm_p),
+        "breusch_pagan_f": float(bp_f),
+        "breusch_pagan_f_p": float(bp_f_p),
+        "breusch_pagan_note": (
+            "Heterocedasticidade detectada (p < 0.05) — erros HC3 justificados"
+            if bp_lm_p < 0.05
+            else "Homocedasticidade não rejeitada (p >= 0.05)"
+        ),
+        # Interaction model
+        "interaction_r2": float(interaction_fit.rsquared),
+        "interaction_r2_adj": float(interaction_fit.rsquared_adj),
+        "interaction_f_stat": float(interaction_fit.fvalue),
+        "interaction_f_p": float(interaction_fit.f_pvalue),
+        "interaction_summary": str(interaction_fit.summary()),
+    }
+
+
 def judge_health_summary(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty or "judge_rationales" not in df.columns:
         return pd.DataFrame()
@@ -286,6 +351,7 @@ def generate_markdown_report(df: pd.DataFrame, out_md: Path) -> None:
     summary = summarize_by_model(df)
     welch = welch_between_models(df)
     ols = fit_ols(df)
+    diagnostics = ols_diagnostics(df)
     judge_agreement = judge_pairwise_agreement(df)
     judge_health = judge_health_summary(df)
 
@@ -313,6 +379,37 @@ def generate_markdown_report(df: pd.DataFrame, out_md: Path) -> None:
     else:
         lines.append("```text")
         lines.append(str(ols.summary()))
+        lines.append("```")
+
+    lines.append("")
+    lines.append("## OLS Diagnostics")
+    lines.append("")
+    if "warning" in diagnostics:
+        lines.append(diagnostics["warning"])
+    else:
+        lines.append("### Shapiro-Wilk (normalidade dos resíduos)")
+        lines.append("")
+        lines.append(f"- stat: {diagnostics['shapiro_wilk_stat']:.6f}")
+        lines.append(f"- p-value: {diagnostics['shapiro_wilk_p']:.6e}")
+        lines.append(f"- interpretação: {diagnostics['shapiro_wilk_note']}")
+        lines.append("")
+        lines.append("### Breusch-Pagan (homocedasticidade)")
+        lines.append("")
+        lines.append(f"- LM stat: {diagnostics['breusch_pagan_lm']:.6f}")
+        lines.append(f"- LM p-value: {diagnostics['breusch_pagan_lm_p']:.6e}")
+        lines.append(f"- F stat: {diagnostics['breusch_pagan_f']:.6f}")
+        lines.append(f"- F p-value: {diagnostics['breusch_pagan_f_p']:.6e}")
+        lines.append(f"- interpretação: {diagnostics['breusch_pagan_note']}")
+        lines.append("")
+        lines.append("### OLS com interação task_type × temperature")
+        lines.append("")
+        lines.append(f"- R²: {diagnostics['interaction_r2']:.4f}")
+        lines.append(f"- R² ajustado: {diagnostics['interaction_r2_adj']:.4f}")
+        lines.append(f"- F-stat: {diagnostics['interaction_f_stat']:.4f}")
+        lines.append(f"- F p-value: {diagnostics['interaction_f_p']:.6e}")
+        lines.append("")
+        lines.append("```text")
+        lines.append(diagnostics["interaction_summary"])
         lines.append("```")
 
     lines.append("")

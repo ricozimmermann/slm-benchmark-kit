@@ -2,6 +2,23 @@
 
 All notable methodology and tooling changes are tracked in this file.
 
+## [0.3.0] - 2026-05-03
+
+### Added
+- `ols_diagnostics()` in `analysis.py`: Shapiro-Wilk normality test on residuals, Breusch-Pagan heteroscedasticity test, and OLS interaction model `task_type × temperature` with HC3 robust errors.
+- `## OLS Diagnostics` section auto-generated in `report.md` by `analyze_results.py`.
+- `configs/benchmark_ollama_docker_smoke.yaml`: smoke configuration for Docker environment validation.
+- `QUICK_GUIDE.md`: consolidated quick reference guide (formerly appendices A/B/C).
+- Section 10 (Autoria e uso de IA) in all README variants documenting human authorship and AI assistance.
+
+### Changed
+- README.md: corrected section ordering (2.1 Onboarding before 2.2 Docker), fixed venv activation command for Linux/macOS, completed section 9 with release protocol and templates.
+- README.en.md and README.es.md: corrected venv activation command; added `metodologia_estatistica` to docs/ listing.
+- `pyproject.toml`: version synchronized to match `VERSION` file.
+
+### Fixed
+- Duplicate block in README.md section 9.
+
 ## [0.2.0] - 2026-04-14
 
 ### Added

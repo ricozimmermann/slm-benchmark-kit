@@ -21,7 +21,8 @@ This project already includes essential benchmark improvements:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
 pip install -e .
 ```
 
@@ -156,6 +157,7 @@ results/raw_benchmark*.jsonl
 - `docs/`
 	- Role: methodological governance.
 	- `human_eval_rubric.en.md`: human scoring criteria (0 to 10 by dimension).
+	- `metodologia_estatistica.en.md`: formal definition of the statistical methodology (bootstrap CI, Welch, Cohen's d, robust OLS, reliability metrics).
 	- `release_protocol.en.md`: scientific checklist for reproducible releases.
 
 - `templates/`
@@ -241,3 +243,9 @@ Templates for dissemination:
 - templates/report_template.md
 - templates/paper_outline.md
 
+## 10. Authorship and AI assistance
+
+The idea, project architecture, and benchmark methodology were conceived and developed by the author.
+The source code was written with AI assistance (GitHub Copilot / Claude), under continuous supervision and review by the author.
+
+All AI-generated content was reviewed, validated, and adapted before being incorporated into the project.

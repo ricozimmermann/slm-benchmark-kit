@@ -15,3 +15,7 @@ src/slm_benchmark_kit.egg-info/SOURCES.txt
 src/slm_benchmark_kit.egg-info/dependency_links.txt
 src/slm_benchmark_kit.egg-info/requires.txt
 src/slm_benchmark_kit.egg-info/top_level.txt
+tests/test_analysis.py
+tests/test_config_dataset.py
+tests/test_human_eval_agreement.py
+tests/test_runner_judges.py

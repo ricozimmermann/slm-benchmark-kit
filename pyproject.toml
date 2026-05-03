@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slm-benchmark-kit"
-version = "0.1.0"
+version = "0.3.0"
 description = "Reusable benchmark framework for Small Language Models (SLMs)"
 readme = "README.md"
 requires-python = ">=3.10"

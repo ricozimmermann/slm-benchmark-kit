@@ -26,8 +26,43 @@ Este projeto ja incorpora melhorias essenciais de benchmark:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
 pip install -e .
+```
+
+## 2.1 Onboarding rapido (ordem recomendada)
+
+Se for sua primeira vez no projeto, siga esta ordem:
+
+1. Rode um smoke test local para validar ambiente e Ollama:
+
+```bash
+python scripts/run_benchmark.py --config configs/benchmark_local_smoke.yaml --check-local
+```
+
+2. Rode o benchmark completo (ou o seu config customizado):
+
+```bash
+python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
+```
+
+3. Gere o relatorio estatistico:
+
+```bash
+python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md
+```
+
+4. (Opcional) Prepare avaliacao humana cega:
+
+```bash
+python scripts/prepare_human_eval.py --input results/raw_benchmark.jsonl --assignment results/human_assignment.csv --key results/human_key_private.csv --evaluators eval01 eval02 eval03 --sample-size 120 --overlap-rate 0.25
+```
+
+5. (Opcional) Gere concordancia entre avaliadores:
+
+```bash
+python scripts/agreement_report.py --input results/human_assignment_scored.csv --key results/human_key_private.csv --output results/human_agreement.md
 ```
 
 ## 2.2 Execucao com Docker (Ollama + benchmark)
@@ -95,40 +130,6 @@ Observacoes:
 - O volume `ollama_data` preserva os modelos entre execucoes.
 - O servico `benchmark` usa `configs/benchmark_ollama_docker.yaml`, com `base_url` apontando para `http://ollama:11434`.
 - A pasta local `results/` e montada no container para manter os artefatos no host.
-
-## 2.1 Onboarding rapido (ordem recomendada)
-
-Se for sua primeira vez no projeto, siga esta ordem:
-
-1. Rode um smoke test local para validar ambiente e Ollama:
-
-```bash
-python scripts/run_benchmark.py --config configs/benchmark_local_smoke.yaml --check-local
-```
-
-2. Rode o benchmark completo (ou o seu config customizado):
-
-```bash
-python scripts/run_benchmark.py --config configs/benchmark_ollama.yaml
-```
-
-3. Gere o relatorio estatistico:
-
-```bash
-python scripts/analyze_results.py --input results/raw_benchmark.jsonl --output results/report.md
-```
-
-4. (Opcional) Prepare avaliacao humana cega:
-
-```bash
-python scripts/prepare_human_eval.py --input results/raw_benchmark.jsonl --assignment results/human_assignment.csv --key results/human_key_private.csv --evaluators eval01 eval02 eval03 --sample-size 120 --overlap-rate 0.25
-```
-
-5. (Opcional) Gere concordancia entre avaliadores:
-
-```bash
-python scripts/agreement_report.py --input results/human_assignment_scored.csv --key results/human_key_private.csv --output results/human_agreement.md
-```
 
 ## 3. Rodar benchmark
 
@@ -303,3 +304,10 @@ Versionamento e governanca metodologica:
 Templates para divulgacao:
 - templates/report_template.md
 - templates/paper_outline.md
+
+## 10. Autoria e uso de IA
+
+A ideia, a arquitetura do projeto e a metodologia de benchmark foram concebidas e elaboradas pelo autor.
+O codigo-fonte foi escrito com assistencia de inteligencia artificial (GitHub Copilot / Claude), sob supervisao e revisao continua do autor.
+
+Todo conteudo gerado por IA foi revisado, validado e adaptado antes de ser incorporado ao projeto.
