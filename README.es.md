@@ -21,7 +21,8 @@ Este proyecto ya incluye mejoras esenciales de benchmark:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
 pip install -e .
 ```
 
@@ -156,6 +157,7 @@ results/raw_benchmark*.jsonl
 - `docs/`
 	- Rol: gobernanza metodologica.
 	- `human_eval_rubric.es.md`: criterios de scoring humano (0 a 10 por dimension).
+	- `metodologia_estatistica.es.md`: definicion formal de la metodologia estadistica (IC bootstrap, Welch, Cohen's d, OLS robusto y metricas de fiabilidad).
 	- `release_protocol.es.md`: checklist cientifico para releases reproducibles.
 
 - `templates/`
@@ -241,3 +243,9 @@ Templates para difusion:
 - templates/report_template.md
 - templates/paper_outline.md
 
+## 10. Autoria y uso de IA
+
+La idea, la arquitectura del proyecto y la metodologia de benchmark fueron concebidas y elaboradas por el autor.
+El codigo fuente fue escrito con asistencia de inteligencia artificial (GitHub Copilot / Claude), bajo supervision y revision continua del autor.
+
+Todo el contenido generado por IA fue revisado, validado y adaptado antes de ser incorporado al proyecto.

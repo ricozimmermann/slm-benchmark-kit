@@ -26,7 +26,8 @@ Este projeto ja incorpora melhorias essenciais de benchmark:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
 pip install -e .
 ```
 
@@ -63,6 +64,72 @@ python scripts/prepare_human_eval.py --input results/raw_benchmark.jsonl --assig
 ```bash
 python scripts/agreement_report.py --input results/human_assignment_scored.csv --key results/human_key_private.csv --output results/human_agreement.md
 ```
+
+## 2.2 Execucao com Docker (Ollama + benchmark)
+
+Pre-requisitos:
+- Docker Desktop instalado e ativo.
+
+Arquivos adicionados para este fluxo:
+- `Dockerfile`
+- `docker-compose.yml`
+- `configs/benchmark_ollama_docker.yaml`
+- `scripts/docker_pull_models.py`
+
+Passo a passo:
+
+1. Suba o servidor Ollama em container:
+
+```bash
+docker compose up -d ollama
+```
+
+2. Baixe os modelos necessarios (benchmark + juizes):
+
+```bash
+docker compose run --rm ollama-pull
+```
+
+Modelos padrao puxados:
+- deepseek-coder:1.3b
+- qwen2.5-coder:1.5b
+- gemma2:2b
+- codellama:7b
+
+Para customizar modelos sem editar arquivo:
+
+```bash
+OLLAMA_MODELS="qwen2.5-coder:1.5b,gemma2:2b" docker compose run --rm ollama-pull
+```
+
+3. Execute o benchmark no container da aplicacao:
+
+```bash
+docker compose run --rm benchmark
+```
+
+Resultado bruto esperado:
+- `results/raw_benchmark_docker.jsonl`
+
+4. Gere o relatorio estatistico em container:
+
+```bash
+docker compose run --rm analysis
+```
+
+Saida esperada:
+- `results/report_docker.md`
+
+5. Encerrar ambiente quando terminar:
+
+```bash
+docker compose down
+```
+
+Observacoes:
+- O volume `ollama_data` preserva os modelos entre execucoes.
+- O servico `benchmark` usa `configs/benchmark_ollama_docker.yaml`, com `base_url` apontando para `http://ollama:11434`.
+- A pasta local `results/` e montada no container para manter os artefatos no host.
 
 ## 3. Rodar benchmark
 
@@ -238,3 +305,9 @@ Templates para divulgacao:
 - templates/report_template.md
 - templates/paper_outline.md
 
+## 10. Autoria e uso de IA
+
+A ideia, a arquitetura do projeto e a metodologia de benchmark foram concebidas e elaboradas pelo autor.
+O codigo-fonte foi escrito com assistencia de inteligencia artificial (GitHub Copilot / Claude), sob supervisao e revisao continua do autor.
+
+Todo conteudo gerado por IA foi revisado, validado e adaptado antes de ser incorporado ao projeto.

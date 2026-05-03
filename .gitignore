@@ -4,6 +4,9 @@ __pycache__/
 .env
 .pytest_cache/
 .ruff_cache/
+*.egg-info/
 results/*.jsonl
 results/*.csv
 results/*.md
+.DS_Store
+**/.DS_Store
